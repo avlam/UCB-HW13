@@ -1,2 +1,2 @@
 # UCB-HW13
-UCB DS Bootcamp Homework 13: Interactive Web
+UCB DS Bootcamp Homework 13: Javascript APIs
