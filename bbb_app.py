@@ -4,6 +4,7 @@ from sqlalchemy.ext.automap import automap_base
 from sqlalchemy.orm import Session
 from sqlalchemy import create_engine
 from flask import Flask, render_template, jsonify
+import re
 
 # Database Setup
 engine = create_engine('sqlite:///Instructions/DataSets/belly_button_biodiversity.sqlite')
@@ -26,7 +27,7 @@ app = Flask(__name__)
 
 # Utility
 def parse_sample(sample_id):
-    if type(sample_id) == str
+    if type(sample_id) == str:
         id = re.search('\d+',sample_id)
         if id == None:
             print('No ID found.')
@@ -66,17 +67,24 @@ def otu_desc():
 # 4- metadata object for given sample
 @app.route('/metadata/<sample>')
 def metadata(sample):
-    pass
+    sample_query = parse_sample(sample)
+    query_string = f'Select * from samples_metadata WHERE sampleid like {sample_query}'
+    return jsonify(pd.read_sql(query_string, engine, index_col='SAMPLEID').to_dict(orient='records'))
 
 # 5- washing frequency as a singular number
 @app.route('/wfreq/<sample>')
 def washing_freq(sample):
-    pass
+    sample_query = parse_sample(sample)
+    query_string = f'Select WFREQ from samples_metadata WHERE sampleid like {sample_query}'
+    return jsonify(int(pd.read_sql(query_string, engine)['WFREQ'][0]))
 
 # 6- List of distionaries containing sorted lists for otu_ids and sample_values
 @app.route('/samples/<sample>')
 def sample_data(sample):
-    pass
+    sample_query = parse_sample(sample)
+    query_string = f'Select BB_{sample_query} as sample_values,otu_id from samples'
+    return jsonify(pd.read_sql('Select BB_940 as sample_values,otu_id from samples', engine)
+        .sort_values('sample_values',ascending=False).to_dict(orient='list'))
 
 
 
