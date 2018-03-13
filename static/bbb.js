@@ -6,8 +6,8 @@ const bubbleScale = 30;
 const metaSubset = 'age,bbtype,ethnicity,gender,location,sampleid';
 
 // Function Definitions
-function updateCharts(sample){
-    generateCharts(sample);
+function updateContent(sample){
+    updateCharts(sample);
     updateSummary(sample);
 }
 
@@ -55,8 +55,7 @@ function generateCharts(sample){
             var otuIds = response.otu_id.slice(0,subsetDisplayed);
             var pieDescriptions = [];
             for(var i=0; i<subsetDisplayed; i++){
-                pieDescriptions.push(otuDescriptions
-        [otuIds[i]]);
+                pieDescriptions.push(otuDescriptions[otuIds[i]]);
             }
             otuIds.push('Others');
             pieDescriptions.push(' ');
@@ -80,13 +79,15 @@ function generateCharts(sample){
                 height: 500,
                 width: 500
             };
-            Plotly.d3.select('pieChart').html('');
             Plotly.newPlot('pieChart',[pieTrace],pieLayout);
             
             var bubbleDescriptions = [];
+            var bubbleColors = [];
             for(var i=0; i<response.sample_values.length; i++){
-                bubbleDescriptions.push(otuDescriptions[otuIds[i]]);
+                bubbleDescriptions.push(otuDescriptions[response.otu_id[i]]);
+                bubbleColors.push(Plotly.d3.hsl(response.otu_id[i]/10,response.sample_values[i]/2+20,50));
             }
+
             var bubbleTrace = {
                 y: response.sample_values,
                 x: response.otu_id,
@@ -94,7 +95,7 @@ function generateCharts(sample){
                     size: response.sample_values.map(data=>data*bubbleScale),
                     sizemode: 'area',
                     sizemin: smallestBubble,
-                    color: 'blue',
+                    color: bubbleColors,
                     maxdisplayed: maxBubbles
                 },
                 hovertext: bubbleDescriptions,
@@ -112,10 +113,15 @@ function generateCharts(sample){
                 width: 1000,
                 height: 500
             }
-            Plotly.d3.select('bubbleChart').html('');
             Plotly.newPlot('bubbleChart',[bubbleTrace],bubbleLayout);
         });
     });
+}
+
+function updateCharts(sample){
+    Plotly.d3.select('pieChart').html('');
+    Plotly.d3.select('bubbleChart').html('');
+    generateCharts(sample);
 }
 
 // Dashboard Titles
@@ -128,7 +134,7 @@ $sampleInfo
 let $select = $sampleInfo
     .append('select')
     .attr('name','sample_select')
-    .attr('onchange','updateCharts(this.value)');
+    .attr('onchange','updateContent(this.value)');
 
 // Populate dashboard
 populateSampleSelect();
