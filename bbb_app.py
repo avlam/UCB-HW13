@@ -62,14 +62,19 @@ def sample_names():
 # 3- List of otu descriptions (list format)
 @app.route('/otu')
 def otu_desc():
-    return jsonify([x[0] for x in session.query(otu.lowest_taxonomic_unit_found).all()])
+    return jsonify({x[0]:x[1] for x in session.query(otu.otu_id, otu.lowest_taxonomic_unit_found).all()})
 
 # 4- metadata object for given sample
 @app.route('/metadata/<sample>')
-def metadata(sample):
+@app.route('/metadata/<sample>/<subset>')
+def metadata(sample, subset=None):
     sample_query = parse_sample(sample)
-    query_string = f'Select * from samples_metadata WHERE sampleid like {sample_query}'
-    return jsonify(pd.read_sql(query_string, engine, index_col='SAMPLEID').to_dict(orient='records'))
+    if subset:
+        select_col = subset
+    else:
+        select_col = '*'
+    query_string = f'Select {select_col} from samples_metadata WHERE sampleid like {sample_query}'
+    return jsonify(pd.read_sql(query_string, engine).to_dict(orient='records'))
 
 # 5- washing frequency as a singular number
 @app.route('/wfreq/<sample>')
@@ -82,8 +87,8 @@ def washing_freq(sample):
 @app.route('/samples/<sample>')
 def sample_data(sample):
     sample_query = parse_sample(sample)
-    query_string = f'Select BB_{sample_query} as sample_values,otu_id from samples'
-    return jsonify(pd.read_sql('Select BB_940 as sample_values,otu_id from samples', engine)
+    query_string = f'Select BB_{sample_query} as sample_values,otu_id from samples WHERE sample_values > 0'
+    return jsonify(pd.read_sql(query_string, engine)
         .sort_values('sample_values',ascending=False).to_dict(orient='list'))
 
 
