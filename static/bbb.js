@@ -12,7 +12,7 @@ function updateContent(sample){
 }
 
 function populateSampleSelect(){
-    Plotly.d3.json('/names',function(error, response){
+    d3.json('/names',function(error, response){
         if(error){return error}
         $select
             .selectAll('option')
@@ -26,7 +26,7 @@ function populateSampleSelect(){
 
 function sampleSummary(sample){
     if(sample === undefined){sample = defaultSample};
-    Plotly.d3.json(`/metadata/${sample}/${metaSubset}`,function(error, response){
+    d3.json(`/metadata/${sample}/${metaSubset}`,function(error, response){
         if(error){return error}
         console.log(response)
         $sampleInfo
@@ -42,15 +42,26 @@ function sampleSummary(sample){
 }
 
 function updateSummary(sample){
-    $sampleInfo.select('#metadata').remove();
-    sampleSummary(sample);
+    // $sampleInfo.select('#metadata').remove();
+    var $oldSample = $sampleInfo.selectAll('li')
+    d3.json(`/metadata/${sample}/${metaSubset}`,function(error, response){
+        if(error){return error}
+        console.log(response)
+        $sampleInfo
+            .selectAll('li')
+            .data(Object.entries(response[0]))
+            .enter()
+            .append('li')
+            .merge($oldSample)
+            .text(data=>`${data[0]}: ${data[1]}`);
+    })
 }
 
 function generateCharts(sample){
     if(sample === undefined){sample = defaultSample};
-    Plotly.d3.json('/samples/'+sample,function(error, response){
+    d3.json('/samples/'+sample,function(error, response){
         if(error){return error}
-        Plotly.d3.json('/otu',function(error, otuDescriptions){
+        d3.json('/otu',function(error, otuDescriptions){
             if(error){return error}
             var otuIds = response.otu_id.slice(0,subsetDisplayed);
             var pieDescriptions = [];
@@ -85,7 +96,7 @@ function generateCharts(sample){
             var bubbleColors = [];
             for(var i=0; i<response.sample_values.length; i++){
                 bubbleDescriptions.push(otuDescriptions[response.otu_id[i]]);
-                bubbleColors.push(Plotly.d3.hsl(response.otu_id[i]/10,response.sample_values[i]/2+20,50));
+                bubbleColors.push(d3.hsl(response.otu_id[i]/10,response.sample_values[i]/2+20,50));
             }
 
             var bubbleTrace = {
@@ -119,13 +130,13 @@ function generateCharts(sample){
 }
 
 function updateCharts(sample){
-    Plotly.d3.select('pieChart').html('');
-    Plotly.d3.select('bubbleChart').html('');
+    d3.select('pieChart').html('');
+    d3.select('bubbleChart').html('');
     generateCharts(sample);
 }
 
 // Dashboard Titles
-let $sampleInfo = Plotly.d3.select('#sampleInfo');
+let $sampleInfo = d3.select('#sampleInfo');
 $sampleInfo
     .append('h2')
     .attr('style','font-size: 1em')
