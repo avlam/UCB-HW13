@@ -10,6 +10,7 @@ astropy==2.0.2
 awscli==1.11.177
 Babel==2.5.0
 backports.shutil-get-terminal-size==1.0.0
+beautifulsoup4==4.6.0
 bitarray==0.8.1
 bkcharts==0.2
 blaze==0.11.3
@@ -22,6 +23,7 @@ bs4==0.0.1
 certifi==2018.1.18
 cffi==1.10.0
 chardet==3.0.4
+citipy==0.0.5
 click==6.7
 cloudpickle==0.4.0
 clyent==1.2.2
@@ -82,6 +84,7 @@ llvmlite==0.20.0
 locket==0.2.0
 lxml==4.1.0
 MarkupSafe==1.0
+matplotlib==2.1.0
 mccabe==0.6.1
 mistune==0.8.1
 mpmath==0.19
@@ -129,6 +132,7 @@ pycurl==7.43.0
 pyflakes==1.6.0
 Pygments==2.2.0
 pylint==1.7.4
+pymongo==3.6.0
 PyMySQL==0.7.11
 pyodbc==4.0.17
 pyOpenSSL==17.2.0
@@ -153,6 +157,7 @@ scikit-image==0.13.0
 scikit-learn==0.19.1
 scipy==1.0.0
 seaborn==0.8
+selenium==3.9.0
 simplegeneric==0.8.1
 singledispatch==3.4.0.3
 six==1.11.0
@@ -178,6 +183,7 @@ typing==3.6.2
 unicodecsv==0.14.1
 unittest-xml-reporting==2.1.0
 urllib3==1.22
+vaderSentiment==2.5
 wcwidth==0.1.7
 webencodings==0.5.1
 Werkzeug==0.12.2
