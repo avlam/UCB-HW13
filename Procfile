@@ -1,1 +1,1 @@
-web: python bbb_app.py
+web: gunicorn bbb_app:app
