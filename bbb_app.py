@@ -4,10 +4,19 @@ from sqlalchemy.ext.automap import automap_base
 from sqlalchemy.orm import Session
 from sqlalchemy import create_engine
 from flask import Flask, render_template, jsonify
+# from flask_sqlalchemy import SQLAlchemy
 import re
+import os
+
+# Flask App
+app = Flask(__name__)
+
+# app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get('DATABASE_URL', '') or 'sqlite:///Instructions/DataSets/belly_button_biodiversity.sqlite'
+# db = SQLAlchemy(app)
 
 # Database Setup
-engine = create_engine('sqlite:///Instructions/DataSets/belly_button_biodiversity.sqlite')
+sql_alchemy_database_uri = os.environ.get('DATABASE_URL', '') or 'sqlite:///Instructions/DataSets/belly_button_biodiversity.sqlite'
+engine = create_engine(sql_alchemy_database_uri)
 Base = automap_base()
 Base.prepare(engine, reflect = True)
 
@@ -21,9 +30,6 @@ s_meta = Base.classes.samples_metadata
 
 # Create Session
 session = Session(engine)
-
-# Flask App
-app = Flask(__name__)
 
 # Utility
 def parse_sample(sample_id):
