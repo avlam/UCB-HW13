@@ -1,1 +1,1 @@
-worker: python bbb_app.py
+web: python bbb_app.py
