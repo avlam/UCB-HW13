@@ -145,7 +145,7 @@ $sampleInfo
 let $select = $sampleInfo
     .append('select')
     .attr('name','sample_select')
-    .on('change',updateContent(this.value));
+    .on('change',function(){updateContent(this.value)});
 
 // Populate dashboard
 populateSampleSelect();
